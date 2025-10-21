@@ -67,7 +67,7 @@ jobs:
         echo "Building image: $IMAGE_URI"
 
         # Building Docker image
-        docker build -t #IMAGE_URI
+        docker build -t #IMAGE_URI .
         docker tag $IMAGE_URI $LATEST_URI
 
         # Push both tagged and latest versions
