@@ -1,0 +1,12 @@
+{
+  "name": "aws_pipeline_app",
+  "version": "1.0.0",
+  "description": "Node.js app on Docker",
+  "author": "Neil Rutherford",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
