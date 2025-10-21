@@ -1,0 +1,57 @@
+name: Setup ECR repo and push first image
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_repository:
+        description: 'Create the ECR repo if it does not already exist'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY:
+  ECR_REPOSITORY: nodeweb01
+
+jobs:
+  setup-and-push:
+    name: Setup ECR repo and push initial image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Create ECR repo if does not exist
+      if: ${{ github.event.inputs.create_repository == 'true' }}
+      run: |
+        echo "Checking if ECR Public repo exists..."
+
+        # Check if repo exists
+        if aws ecr-public describe-repositories --repository-names $ECR_REPOSITORY --region us-east-1 2>/dev/null; then
+          echo "Repo $ECR_REPOSITORY already exists"
+        else
+          echo "Creating public ECR repo: $ECR_REPOSITORY"
+
+          # Try different approaches for repository creation
+          if aws ecr-public create-repository \
+            --repository-name $ECR_REPOSITORY \
+            --region us-east-1 2>/dev/null; then
+            echo "Repository created successfully (basic)"
+          fi
+        fi
+
+    - name: Login to AWS public ECR
+      id: login-ecr-public
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry-type: public
+        mask-password: 'true'
