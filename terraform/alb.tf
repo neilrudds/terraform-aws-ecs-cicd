@@ -19,7 +19,7 @@ resource "aws_alb_target_group" "alb-tg" {
   name        = "alb-tg"
   port        = var.app_port
   protocol    = "HTTP"
-  vpc_id      = ""
+  vpc_id      = aws_vpc.vpc.id
   target_type = "ip"
 
   depends_on = [aws_vpc.vpc]
