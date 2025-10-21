@@ -67,8 +67,6 @@ resource "aws_ecs_service" "ecs-service" {
     security_groups = [aws_security_group.alb-sg.id]
   }
 
-  force_new_deployment = true
-
   placement_constraints {
     type = "distinctInstance"
   }
