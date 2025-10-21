@@ -26,6 +26,6 @@ resource "aws_security_group" "alb-sg" {
 
   tags = {
     name    = "alb-sg",
-    Project = "${var.project_name}"
+    project = "${var.project_name}"
   }
 }

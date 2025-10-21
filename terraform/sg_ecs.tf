@@ -1,7 +1,7 @@
 resource "aws_security_group" "ecs-sg" {
   name        = "ecs-sg"
   description = "Allow incoming traffic to application port"
-  vpc_id      = ""
+  vpc_id      = aws_vpc.vpc.id
 
   ingress {
     from_port       = var.app_port
