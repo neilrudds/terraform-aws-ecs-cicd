@@ -63,17 +63,17 @@ jobs:
         INITIAL_TAG="v1.0.0"
         IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$INITIAL_TAG"
         LATEST_URI="$ECR_REGISTRY/$ECR_REPOSITORY:latest"
-
-        echo "Building image: $IMAGE_URI"
-
-        # Building Docker image
-        docker build -t #IMAGE_URI .
+        
+        echo "Building initial image: $IMAGE_URI"
+        
+        # Build the Docker image
+        docker build -t $IMAGE_URI .
         docker tag $IMAGE_URI $LATEST_URI
-
+        
         # Push both tagged and latest versions
         docker push $IMAGE_URI
         docker push $LATEST_URI
-
+        
         echo "## Initial ECR Setup Complete!" >> $GITHUB_STEP_SUMMARY
 
     - name: Verify image in ECR
