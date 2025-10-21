@@ -11,7 +11,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REGISTRY:
+  ECR_REGISTRY: public.ecr.aws/t1v3g1m3
   ECR_REPOSITORY: nodeweb01
 
 jobs:
@@ -55,3 +55,32 @@ jobs:
       with:
         registry-type: public
         mask-password: 'true'
+
+    - name: Build and push Docker image
+      working-directory: ./app
+      run: |
+        # Generate initial image tag
+        INITIAL_TAG="v1.0.0"
+        IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$INITIAL_TAG"
+        LATEST_URI="$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+        echo "Building image: $IMAGE_URI"
+
+        # Building Docker image
+        docker build -t #IMAGE_URI
+        docker tag $IMAGE_URI $LATEST_URI
+
+        # Push both tagged and latest versions
+        docker push $IMAGE_URI
+        docker push $LATEST_URI
+
+        echo "## Initial ECR Setup Complete!" >> $GITHUB_STEP_SUMMARY
+
+    - name: Verify image in ECR
+      run: |
+        echo "Verifying images in ECR repository..."
+        aws ecr-public describe-images \
+          --repository-name $ECR_REPOSITORY \
+          --region us-east-1 \
+          --query 'imageDetails[*].[imageTags[0],imagePushedAt]' \
+          --output table
