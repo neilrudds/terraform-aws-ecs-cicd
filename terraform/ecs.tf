@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "nodejs-backend-task" {
 
   container_definitions = jsonencode([
     {
-      name  = "nodejs-app"
+      name  = var.app_name
       image = "${aws_ecr_repository.ecr-repo.repository_url}:latest"
 
       portMappings = [
@@ -66,6 +66,8 @@ resource "aws_ecs_service" "ecs-service" {
     subnets         = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
     security_groups = [aws_security_group.alb-sg.id]
   }
+
+  force_new_deployment = true
 
   placement_constraints {
     type = "distinctInstance"
