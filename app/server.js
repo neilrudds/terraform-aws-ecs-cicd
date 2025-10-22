@@ -12,12 +12,14 @@ const ENV = 'DEV';
 // App
 const app = express();
 app.get('/', (req, res) => {
+  console.log(req.headers);
   res.statusCode = 200;
   const msg = 'Hello from Node!';
   res.send(getPage(msg));
 });
 
 app.get('/test', (req, res) => {
+  console.log(req.headers);
   res.statusCode = 200;
   const msg = 'Hello from /test Node!';
   res.send(getPage(msg));
