@@ -23,17 +23,17 @@ resource "aws_alb_target_group" "alb-tg" {
 
   depends_on = [aws_vpc.vpc]
 
-  health_check {
-    enabled             = true
-    healthy_threshold   = 2
-    interval            = 30
-    matcher             = "200"
-    path                = "/"
-    port                = "traffic-port"
-    protocol            = "HTTP"
-    timeout             = 5
-    unhealthy_threshold = 2
-  }
+  #health_check {
+   # enabled             = true
+   # healthy_threshold   = 2
+   # interval            = 30
+   # matcher             = "200"
+   # path                = "/"
+   # port                = "traffic-port"
+   # protocol            = "HTTP"
+   # timeout             = 5
+   # unhealthy_threshold = 2
+  #}
 
   tags = {
     project = "${var.project_name}"
