@@ -23,6 +23,12 @@ app.get('/test', (req, res) => {
   res.send(getPage(msg));
 });
 
+// Health check path
+app.get("/health", (req, res) => {
+  res.statusCode = 200;
+  res.send("Server is healthy");
+});
+
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
 
