@@ -19,6 +19,7 @@ env:
 
 jobs:
     deploy:
+        permissions: write-all
         name: Deploy Infrastructure
         runs-on: ubuntu-latest
         defaults:
