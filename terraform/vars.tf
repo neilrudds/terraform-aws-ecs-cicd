@@ -59,13 +59,13 @@ variable "app_port" {
 }
 
 variable "task_cpu" {
-  default     = 1024
+  default     = 256
   description = "CPU units for the task (256, 512, 1024, 2048, 4096)"
   type        = number
 }
 
 variable "task_memory" {
-  default     = 2048
+  default     = 512
   description = "Memory (MB) for the task"
   type        = number
 }
@@ -77,7 +77,7 @@ variable "app_name" {
 }
 
 variable "min_capacity" {
-  default     = 1
+  default     = 2
   description = "Min. number of task instances"
   type        = number
 }
