@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "nodejs-backend-task" {
         },
         {
           name  = "PORT"
-          value = var.app_port
+          value = tostring(var.app_port)
         }
       ]
       essential = true
