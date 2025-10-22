@@ -27,6 +27,7 @@ resource "aws_ecs_task_definition" "nodejs-backend-task" {
           containerPort = var.app_port
           hostPort      = var.app_port
           protocol      = "tcp"
+          appProtocol   = "http"
         }
       ]
 
@@ -49,6 +50,14 @@ resource "aws_ecs_task_definition" "nodejs-backend-task" {
           value = tostring(var.app_port)
         }
       ]
+
+      healthCheck = {
+        command     = ["curl -f http://localhost:${var.app_port}"]
+        interval    = 30
+        timeout     = 5
+        retries     = 3
+        startPeriod = 60
+      }
       essential = true
     }
   ])
@@ -70,7 +79,7 @@ resource "aws_ecs_service" "ecs-service" {
 
   network_configuration {
     subnets         = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
-    security_groups = [aws_security_group.alb-sg.id]
+    security_groups = [aws_security_group.ecs-sg.id]
   }
 
   load_balancer {
