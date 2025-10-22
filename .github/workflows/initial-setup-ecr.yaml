@@ -11,7 +11,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REGISTRY: public.ecr.aws/t1v3g1m3
+  ECR_REGISTRY: 151482153576.dkr.ecr.us-east-1.amazonaws.com
   ECR_REPOSITORY: tf01-nodeweb01
 
 jobs:
@@ -33,27 +33,27 @@ jobs:
     - name: Create ECR repo if does not exist
       if: ${{ github.event.inputs.create_repository == 'true' }}
       run: |
-        echo "Checking if ECR Public repo exists..."
+        echo "Checking if ECR Private repo exists..."
 
         # Check if repo exists
-        if aws ecr-public describe-repositories --repository-names $ECR_REPOSITORY --region us-east-1 2>/dev/null; then
+        if aws ecr-private describe-repositories --repository-names $ECR_REPOSITORY --region us-east-1 2>/dev/null; then
           echo "Repo $ECR_REPOSITORY already exists"
         else
-          echo "Creating public ECR repo: $ECR_REPOSITORY"
+          echo "Creating private ECR repo: $ECR_REPOSITORY"
 
           # Try different approaches for repository creation
-          if aws ecr-public create-repository \
+          if aws ecr-private create-repository \
             --repository-name $ECR_REPOSITORY \
             --region us-east-1 2>/dev/null; then
             echo "Repository created successfully (basic)"
           fi
         fi
 
-    - name: Login to AWS public ECR
-      id: login-ecr-public
+    - name: Login to AWS private ECR
+      id: login-ecr-private
       uses: aws-actions/amazon-ecr-login@v2
       with:
-        registry-type: public
+        registry-type: private
         mask-password: 'true'
 
     - name: Build and push Docker image
@@ -85,7 +85,7 @@ jobs:
     - name: Verify image in ECR
       run: |
         echo "Verifying images in ECR repository..."
-        aws ecr-public describe-images \
+        aws ecr-private describe-images \
           --repository-name $ECR_REPOSITORY \
           --region us-east-1 \
           --query 'imageDetails[*].[imageTags[0],imagePushedAt]' \

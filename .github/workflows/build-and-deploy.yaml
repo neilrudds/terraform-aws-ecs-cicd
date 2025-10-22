@@ -14,7 +14,7 @@ on:
 
 env:
     AWS_REGION: us-east-1
-    ECR_REGISTRY: public.ecr.aws/t1v3g1m3
+    ECR_REGISTRY: 151482153576.dkr.ecr.us-east-1.amazonaws.com
     ECR_REPOSITORY: tf01-nodeweb01
     TASK_DEFINITION: nodejs-backend-task
     CONTAINER_NAME: nodeweb01
@@ -40,11 +40,11 @@ jobs:
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to AWS ECR public repo
-        id: login-ecr-public
+      - name: Login to AWS ECR private repo
+        id: login-ecr-private
         uses: aws-actions/amazon-ecr-login@v2
         with:
-            registry-type: public
+            registry-type: private
             mask-password: 'true'
 
       - name: Build and push docker image
