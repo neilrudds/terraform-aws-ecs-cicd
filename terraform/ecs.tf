@@ -60,21 +60,16 @@ resource "aws_ecs_task_definition" "nodejs-backend-task" {
 
 # ECS Service
 resource "aws_ecs_service" "ecs-service" {
-  name            = "${var.project_name}-ecs-service"
-  cluster         = aws_ecs_cluster.ecs-cluster.id
-  task_definition = aws_ecs_task_definition.nodejs-backend-task.arn
-  desired_count   = var.min_capacity
-  launch_type     = "FARGATE"
+  name                 = "${var.project_name}-ecs-service"
+  cluster              = aws_ecs_cluster.ecs-cluster.id
+  task_definition      = aws_ecs_task_definition.nodejs-backend-task.arn
+  desired_count        = var.min_capacity
+  launch_type          = "FARGATE"
+  force_new_deployment = true
 
   network_configuration {
     subnets         = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
     security_groups = [aws_security_group.alb-sg.id]
-  }
-
-  force_new_deployment = true
-
-  triggers = {
-    redeployment = timestamp()
   }
 
   load_balancer {
