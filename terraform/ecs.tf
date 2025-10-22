@@ -25,6 +25,7 @@ resource "aws_ecs_task_definition" "nodejs-backend-task" {
       portMappings = [
         {
           containerPort = var.app_port
+          hostPort      = var.app_port
           protocol      = "tcp"
         }
       ]
