@@ -1,5 +1,5 @@
 resource "aws_security_group" "alb-sg" {
-  name        = "ALB Security Group"
+  name        = "${var.project_name}-alb-sg"
   description = "Allow incoming HTTP/HTTPS traffic for ALB"
   vpc_id      = aws_vpc.vpc.id
 
@@ -25,7 +25,6 @@ resource "aws_security_group" "alb-sg" {
   }
 
   tags = {
-    name    = "alb-sg",
     project = "${var.project_name}"
   }
 }

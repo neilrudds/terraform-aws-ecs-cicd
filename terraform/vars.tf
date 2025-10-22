@@ -1,5 +1,5 @@
 variable "project_name" {
-  default     = "terraform-aws-ecs-cicd"
+  default     = "tf01"
   description = "Project Name"
   type        = string
 }

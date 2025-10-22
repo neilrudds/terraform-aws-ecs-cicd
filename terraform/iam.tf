@@ -1,6 +1,6 @@
 # ECS Execution Role
 resource "aws_iam_role" "ecs_execution_role" {
-  name = "ecs-execution-role"
+  name = "${var.project_name}-ecs-execution-role"
 
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
@@ -19,7 +19,6 @@ resource "aws_iam_role" "ecs_execution_role" {
   })
 
   tags = {
-    name    = "ecs-execution-role"
     project = "${var.project_name}"
   }
 }
@@ -31,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
 
 # Policy for ECR public registry access
 resource "aws_iam_role_policy" "ecr_public_registry_access_policy" {
-  name = "ecr-public-registry-access-policy"
+  name = "${var.project_name}-ecr-public-registry-access-policy"
   role = aws_iam_role.ecs_execution_role.id
 
   policy = jsonencode({
@@ -53,7 +52,7 @@ resource "aws_iam_role_policy" "ecr_public_registry_access_policy" {
 
 # ECS Task Role
 resource "aws_iam_role" "ecs_task_role" {
-  name = "ecs-task-role"
+  name = "${var.project_name}-ecs-task-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -69,8 +68,6 @@ resource "aws_iam_role" "ecs_task_role" {
   })
 
   tags = {
-    name    = "ecs-task-role"
     project = "${var.project_name}"
   }
-
 }

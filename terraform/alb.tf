@@ -1,6 +1,6 @@
 # Application Load Balancer
 resource "aws_alb" "alb" {
-  name               = "alb"
+  name               = "${var.project_name}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb-sg.id]
@@ -9,14 +9,13 @@ resource "aws_alb" "alb" {
   enable_deletion_protection = false
 
   tags = {
-    name    = "alb"
     project = "${var.project_name}"
   }
 }
 
 # ALB Target Group
 resource "aws_alb_target_group" "alb-tg" {
-  name        = "alb-tg"
+  name        = "${var.project_name}-alb-tg"
   port        = var.app_port
   protocol    = "HTTP"
   vpc_id      = aws_vpc.vpc.id
@@ -37,7 +36,6 @@ resource "aws_alb_target_group" "alb-tg" {
   }
 
   tags = {
-    name    = "alb-tg"
     project = "${var.project_name}"
   }
 }
@@ -58,7 +56,7 @@ resource "aws_lb_listener" "alb-listener" {
   }
 
   tags = {
-    name    = "alb-listener"
+    name    = "${var.project_name}-alb-listener"
     project = "${var.project_name}"
   }
 }

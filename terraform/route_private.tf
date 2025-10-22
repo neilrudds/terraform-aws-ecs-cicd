@@ -7,7 +7,7 @@ resource "aws_route_table" "private-route-table" {
   }
 
   tags = {
-    name    = "private-route-table"
+    name    = "${var.project_name}-private-route-table"
     project = "${var.project_name}"
   }
 }

@@ -4,7 +4,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    name    = "vpc"
+    name    = "${var.project_name}-vpc"
     project = "${var.project_name}"
   }
 }

@@ -1,5 +1,5 @@
 resource "aws_security_group" "ecs-sg" {
-  name        = "ecs-sg"
+  name        = "${var.project_name}-ecs-sg"
   description = "Allow incoming traffic to application port"
   vpc_id      = aws_vpc.vpc.id
 
@@ -18,7 +18,6 @@ resource "aws_security_group" "ecs-sg" {
   }
 
   tags = {
-    name    = "ecs-sg"
     project = "${var.project_name}"
   }
 }

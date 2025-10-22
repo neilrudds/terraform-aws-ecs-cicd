@@ -15,11 +15,11 @@ on:
 env:
     AWS_REGION: us-east-1
     ECR_REGISTRY: public.ecr.aws/t1v3g1m3
-    ECR_REPOSITORY: nodeweb01
+    ECR_REPOSITORY: tf01-nodeweb01
     TASK_DEFINITION: nodejs-backend-task
     CONTAINER_NAME: nodeweb01
-    ECS_SERVICE: ecs-service
-    ECS_CLUSTER: ecs-cluster
+    ECS_SERVICE: tf01-ecs-service
+    ECS_CLUSTER: tf01-ecs-cluster
 
 jobs:
     build-and-push:

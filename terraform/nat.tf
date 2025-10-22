@@ -2,7 +2,7 @@
 resource "aws_eip" "eip-nat" {
 
   tags = {
-    name    = "eip-nat"
+    name    = "${var.project_name}-eip-nat"
     project = "${var.project_name}"
   }
 }
@@ -13,7 +13,7 @@ resource "aws_nat_gateway" "nat-gateway" {
   subnet_id     = aws_subnet.public-subnet-2.id
 
   tags = {
-    name    = "nat-gateway"
+    name    = "${var.project_name}-nat-gateway"
     project = "${var.project_name}"
   }
 }

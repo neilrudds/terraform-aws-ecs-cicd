@@ -1,6 +1,10 @@
 # ECR Repository
 resource "aws_ecr_repository" "ecr-repo" {
-  name = var.app_name
+  name = "${var.project_name}-${var.app_name}"
+
+  tags = {
+    project = "${var.project_name}"
+  }
 }
 
 # ECS Task
@@ -49,14 +53,14 @@ resource "aws_ecs_task_definition" "nodejs-backend-task" {
   ])
 
   tags = {
-    name    = "nodejs-backend-task"
+    name    = "${var.project_name}-nodejs-backend-task"
     project = "${var.project_name}"
   }
 }
 
 # ECS Service
 resource "aws_ecs_service" "ecs-service" {
-  name            = "ecs-service"
+  name            = "${var.project_name}-ecs-service"
   cluster         = aws_ecs_cluster.ecs-cluster.id
   task_definition = aws_ecs_task_definition.nodejs-backend-task.arn
   desired_count   = var.min_capacity
@@ -80,9 +84,17 @@ resource "aws_ecs_service" "ecs-service" {
   }
 
   depends_on = [aws_lb_listener.alb-listener]
+
+  tags = {
+    project = "${var.project_name}"
+  }
 }
 
 # ECS Cluster
 resource "aws_ecs_cluster" "ecs-cluster" {
-  name = "ecs-cluster"
+  name = "${var.project_name}-ecs-cluster"
+
+  tags = {
+    project = "${var.project_name}"
+  }
 }

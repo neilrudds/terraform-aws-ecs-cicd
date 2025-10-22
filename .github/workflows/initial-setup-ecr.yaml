@@ -12,7 +12,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REGISTRY: public.ecr.aws/t1v3g1m3
-  ECR_REPOSITORY: nodeweb01
+  ECR_REPOSITORY: tf01-nodeweb01
 
 jobs:
   setup-and-push:
