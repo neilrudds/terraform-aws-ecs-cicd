@@ -56,7 +56,7 @@ jobs:
 
     - name: Terraform destroy
       id: destroy
-      run: terraform apply "tfplan-destroy" -auto-approve
+      run: terraform apply -auto-approve tfplan-destroy
 
     - name: Summary
       run: echo "## Infrastructure destroyed successfully!" >> $GITHUB_STEP_SUMMARY
