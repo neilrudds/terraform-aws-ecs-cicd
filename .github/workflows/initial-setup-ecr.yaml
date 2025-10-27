@@ -14,6 +14,9 @@ env:
   ECR_REGISTRY: 151482153576.dkr.ecr.us-east-1.amazonaws.com
   ECR_REPOSITORY: tf01-nodeweb01
 
+permissions:
+  id-token: write   # This is required for requesting the JWT token
+
 jobs:
   setup-and-push:
     name: Setup ECR repo and push initial image
@@ -23,11 +26,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: arn:aws:iam::151482153576:role/GitHub_ECS_Deployment
+        role-session-name: initial-setup-ecr-session
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Create ECR repo if does not exist

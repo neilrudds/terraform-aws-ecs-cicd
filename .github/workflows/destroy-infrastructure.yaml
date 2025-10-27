@@ -12,6 +12,9 @@ env:
   AWS_REGION: us-east-1
   TF_VERSION: 1.13.4
 
+permissions:
+  id-token: write   # This is required for requesting the JWT token
+
 jobs:
   destroy:
     name: Destroy Infrastructure
@@ -26,11 +29,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with: 
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+      with:
+        role-to-assume: arn:aws:iam::151482153576:role/GitHub_ECS_Deployment
+        role-session-name: destroy-infrastructure-session
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Setup Terraform
