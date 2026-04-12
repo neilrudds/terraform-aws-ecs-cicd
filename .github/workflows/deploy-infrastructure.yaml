@@ -19,83 +19,101 @@ env:
 
 permissions:
   id-token: write   # This is required for requesting the JWT token
+  contents: read
+  pull-requests: write
+  security-events: write
 
 jobs:
-    deploy:
-        permissions: write-all
-        name: Deploy Infrastructure
-        runs-on: ubuntu-latest
-        defaults:
-          run:
-            shell: bash
-            # Terraform files are in the terraform directory
-            working-directory: ./terraform
-
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: configure aws credentials
-          uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
-          with:
-            role-to-assume: arn:aws:iam::151482153576:role/GitHub_ECS_Deployment
-            role-session-name: deploy-infrastructure-session
-            aws-region: ${{ env.AWS_REGION }}
-
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v3
-          with:
-            terraform_version: ${{ env.TF_VERSION }}
-
-        - name: Terraform init
-          id: init
-          run: terraform init
-
-        - name: Terraform format
-          id: fmt
-          run: terraform fmt -check
-
-        - name: Terraform validate
-          id: validate
-          run: terraform validate
-
-        - name: Terraform plan
-          id: plan
-          if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
-          run: terraform plan -no-color -input=false
-          continue-on-error: true
-
-        - uses: actions/github-script@v6
-          if: github.event_name == 'pull_request'
-          env:
-            PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-          with:
-            script: |
-              const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-              #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-              #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-              #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+  security:
+    name: IaC - Security Scan
+    runs-on: ubuntu-latest
     
-              <details><summary>Show Plan</summary>
-    
-              \`\`\`\n
-              ${process.env.PLAN}
-              \`\`\`
-    
-              </details>
-              *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-    
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: output
-              })
+    steps:
+      - name: Git Clone the Repo
+        uses: actions/checkout@v4
 
-        - name: Terraform Plan Status
-          if: steps.plan.outcome == 'failure'
-          run: exit 1
- 
-        - name: Terraform Apply
-          if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-          run: terraform apply -auto-approve -input=false
+      - name: tfsec
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
+        with:
+          working_directory: ./terraform
+          github_token: ${{ github.token }}
+
+
+  deploy:
+    permissions: write-all
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        # Terraform files are in the terraform directory
+        working-directory: ./terraform
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        with:
+          role-to-assume: arn:aws:iam::151482153576:role/GitHub_ECS_Deployment
+          role-session-name: deploy-infrastructure-session
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform init
+        id: init
+        run: terraform init
+
+      - name: Terraform format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform validate
+        id: validate
+        run: terraform validate
+
+      - name: Terraform plan
+        id: plan
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+  
+            <details><summary>Show Plan</summary>
+  
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+  
+            </details>
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+  
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        run: terraform apply -auto-approve -input=false
